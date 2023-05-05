@@ -1,21 +1,43 @@
-# Node.js MongoDB Nginx
+# Node.js, MongoDB, and Nginx with Docker
 
-Dockerized Node.js API, MongoDB database, and Ngnix reverse proxy with room for acme (letsencrypt) companion.
+Dockerized template for a Node.js API, MongoDB database, and served by a Ngnix reverse proxy with considerations for the acme (letsencrypt) companion for HTTPS.
+
+**This project is by default set up for a development environment and will require some changes for a more production like environment.*
+
+## Set Up
+
+1. Install `docker` and `docker-compose`.
+
+### Optional
+
+By default I have set the `VIRTUAL_HOST` to `localhost`, so when you run this project you can access the app without having to change anything locally.
+
+I would highly encourage you to read the [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) repo documentation for more detailed information about setting this up in a more production like environment.
+
+**TLDR; To set up this app with a custom domain, follow the steps below.**
+
+1. Update the `VIRTUAL_HOST` in the `docker-compose.yml` to whatever hostname you want.
+   - i.e. `somedomain.local`
+2. Add your chosen hostname to the `/etc/hosts` file on your local machine, and point it to localhost.
+   - e.g. `127.0.0.1 somedomain.local`
 
 ## Development
 
-1. Install `docker` and `docker-compose`.
-2. Update the `VIRTUAL_HOST` in the `docker-compose.yml` to whatever hostname you want (default is `somedomain.local`).
-3. Add your chosen hostname pointing to localhost to `/etc/hosts` on your local machine. Example: `somedomain.local 127.0.0.1`. (Depending on the production requirements his may only be for local development, but leaves room for the use of an externally registered domain and SSL.)
-4. Either run `make start` for detached mode or simply run `docker-compose up`.
-5. In the browser, enter the hostname (default it's `somedomain.local`) and you should see a basic "Hello World!" page. 
+- For detached mode, run:
+  ```bash
+  docker-compose up -d
+  ```
+- For attached mode, run:
+  ```bash
+  docker-compose up
+  ```
 
-## Production
+Since this is a development template, the nodejs container has a linked volume to detect changes and the nodejs container runs the `nodemon` command for code auto detection and process restart.
 
-TBD
+If you want to run this in a more production like environment, you will want to remove the volume parameter from the nodejs service in the `docker-compose.yaml` and change the nodejs service `ENVIRONMENT` to `prod`.
 
-## Notes
+## Comments
 
-- What are the resource constraints of the hardware hosting the webserver? (raspbery pi os 11 bulleye)
-  - Change mongo version to 5.0-bionic potentially.
-- If given a registered domain, replace `VIRTUAL_HOST` and localhost to said domain, and add the acme companion for auto generating SSL certs.
+- Look at the Makefile for other useful commands.
+- If you have a registered domain, replace `VIRTUAL_HOST` and localhost to said domain, and add the acme companion for HTTPS.
+  - Read the [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) repo documentation for more information on how to configure HTTPS.
