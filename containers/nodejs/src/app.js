@@ -1,53 +1,44 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const UsersModel = require('./models/usersModel.js');
 
 const app = express();
 const DB_URI = process.env.MONGO_URI;
+let db;
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  phone: String
-});
-const UserModel = mongoose.model('User', userSchema);
-
-mongoose.connect(DB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-  })
-  .then(() => {
-    const user = new UserModel({
-      name: 'Night Man',
-      email: 'nightman@dayman.com',
-      phone: '000-000-0000'
-    });
-    return user.save();
-  })
-  .then(() => {
-    console.log('User created!');
-  })
-  .catch(err => {
-    console.error(err);
-    mongoose.disconnect();
-  });
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-  console.log('Connected to MongoDB');
-});
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-app.get('/db-check', async (req, res) => {
+async function init() {
   try {
-    const documents = await UserModel.find();
-    if (!documents) {
+    // Connect to the MongoDB database.
+    const client = await mongoose.connect(DB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    db = client.connection.db;
+
+    console.log(`Connected to MongoDB: ${db.databaseName}`);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+init();
+
+app.get('/', async (req, res) => {
+  try {
+    const usersDocs = await UsersModel.find();
+    if (!usersDocs) {
       return res.status(404).send('Documents not found');
     }
-    return res.send(documents);
+    console.log(usersDocs);
+
+    res.setHeader('Content-Type', 'text/html');
+
+    res.write("<h1>Welcome to Node.js, MongoDB, and NGINX with Docker!</h1>");
+    usersDocs.forEach((user) => {
+      res.write(`<h3>Username: ${user.username}<br>Email: ${user.email}</h3>`);
+    });
+    return res.end();
   } catch (err) {
     console.error(err);
     return res.status(500).send('Server Error');

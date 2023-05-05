@@ -20,8 +20,11 @@ services:
       - "3000"
     environment:
       MONGO_URI: mongodb://db-mongo:27017/mydb
-      VIRTUAL_HOST: "somedomain.local"
+      VIRTUAL_HOST: "localhost"
       VIRTUAL_PORT: "3000"
+      ENVIRONMENT: "dev"
+    volumes:
+      - ./containers/nodejs/src:/srv/src
     networks:
       - my_network
 

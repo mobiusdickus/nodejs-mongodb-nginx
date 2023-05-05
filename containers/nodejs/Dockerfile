@@ -2,10 +2,12 @@ FROM node:14-alpine
 
 WORKDIR /srv
 
-COPY package*.json ./
+COPY package*.json .
 
 RUN npm install
 
-COPY ./src .
+COPY src/ src/
+COPY scripts/ scripts/
+COPY start.sh .
 
-CMD ["node", "app.js"]
+CMD ["sh", "start.sh"]
