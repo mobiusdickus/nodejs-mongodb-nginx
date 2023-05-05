@@ -24,6 +24,7 @@ I would highly encourage you to read the [nginx-proxy](https://github.com/nginx-
 ## Development
 
 - For detached mode, run:
+- For detached mode, run:
   ```bash
   docker-compose up -d
   ```

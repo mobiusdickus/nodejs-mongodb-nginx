@@ -35,6 +35,7 @@ app.get('/', async (req, res) => {
     res.setHeader('Content-Type', 'text/html');
 
     res.write("<h1>Welcome to Node.js, MongoDB, and NGINX with Docker!</h1>");
+    res.write("<h3>Default user data pulled from the database --></h3>");
     usersDocs.forEach((user) => {
       res.write(`<h3>Username: ${user.username}<br>Email: ${user.email}</h3>`);
     });
